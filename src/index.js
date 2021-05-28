@@ -4,8 +4,9 @@ require('isomorphic-fetch');
 const express = require('express');
 const app = express();
 
-// constants
 const MOCKAPI_URL = "https://609aae2c0f5a13001721bb02.mockapi.io/lightfeather/managers";
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //	GET endpoint - retrieve, parse, and order list of supervisors
 app.get('/api/supervisors', async (req, res) => {
@@ -62,8 +63,21 @@ app.get('/api/supervisors', async (req, res) => {
 
 //	POST endpoint - post [FirstName*, LastName*, Email, Phone, Supervisor*] and print response to console
 app.post('/api/submit', (req, res) => {
-	
+	//	check if required fields were passed
+	var response = "";
+	if (!req.body.FirstName || !req.body.LastName || !req.body.Supervisor) {
+		response = "Missing required field";
+	} else {
+		//	extract information from req body
+		response = "Received\nFirst Name: ".concat(req.body.FirstName);
+		response = response.concat("\nLast Name: ").concat(req.body.LastName);
+		if (req.body.Email) { response = response.concat("\nEmail: ").concat(req.body.Email); }
+		if (req.body.Phone) { response = response.concat("\nPhone: ").concat(req.body.Phone); }
+		response = response.concat("\nSupervisor: ").concat(req.body.Supervisor);
+	}
+	console.log(response);
+	res.send(response);
 });
 
-//	server port
+//	server port (for testing)
 app.listen(5000);
